@@ -1,0 +1,16 @@
+.center {
+    width: 1000px;
+    /* Ширина элемента в пикселах */
+    padding: 2px;
+    /* Поля вокруг текста */
+    margin: auto;
+    /* Выравниваем по центру */
+    display: flex;
+    background-color: transparent;
+    font-stretch: normal;
+}
+
+.colorblue {
+    color: rgb(118, 205, 216);
+    /* Цвет текста */
+}
