@@ -1,6 +1,10 @@
 <?php
 // var_dump($_POST);
 $index = file_get_contents("index.txt");
+if (!$index) {
+    $index = 0;
+    saveIndexToTxt($index);
+}
 
 $page = fopen("pages.txt", 'r');
 $i = 0;
@@ -11,17 +15,28 @@ while (!feof($page)) //eof - end of file
 }
 $size = count($pages);
 
+
 if (isset($_POST['plus'])) {
-    global $index;
     pluseOne();
+    printWeb();
+} elseif (isset($_POST['minus'])) {
+    minusOne();
+    printWeb();
+} elseif (isset($_POST['index'])) {
+    global $index, $size;
+    $index = $_POST['index'];
+
+    if ($index < 0) {
+        $index = 0;
+    } else if ($index > $size - 1) {
+        $index = $size - 1;
+    }
+    saveIndexToTxt($index);
+    printWeb();
+} else {
     printWeb();
 }
 
-if (isset($_POST['minus'])) {
-    global $index;
-    minusOne();
-    printWeb();
-}
 
 function printWeb()
 {
@@ -52,30 +67,36 @@ function printWeb()
 function minusOne()
 {
     global $index;
-    $writer = fopen("index.txt", 'w+');
+    // $writer = fopen("index.txt", 'w+');
 
     if ($index - 1 > 0) {
-        fwrite($writer, $index - 1);
+        // fwrite($writer, $index - 1);
+        $index = $index - 1;
     } else {
-        fwrite($writer, 0);
+        // fwrite($writer, 0);
+        $index = 0;
     }
-
-    $index = file_get_contents("index.txt");
-    fclose($writer);
+    saveIndexToTxt($index);
+    // $index = file_get_contents("index.txt");
+    // fclose($writer);
 }
 
 function pluseOne()
 {
     global $index, $size;
-    $writer = fopen("index.txt", 'w+');
 
-    if ($index != null && $index < $size - 1) {
-        fwrite($writer, $index + 1);
+    if ($index < $size - 1) {
+        $index = $index + 1;
     } else {
-        fwrite($writer, $index);
+        $index = 0;
     }
+    saveIndexToTxt($index);
+}
 
-    $index = file_get_contents("index.txt");
+function saveIndexToTxt($index)
+{
+    $writer = fopen("index.txt", 'w+');
+    fwrite($writer, $index);
     fclose($writer);
 }
 ?>
@@ -102,5 +123,13 @@ function pluseOne()
             <input type="submit" value="next">
         </form>
     </div>
+
+    <div class="center">
+        <form action="asp.net.php" method="POST">
+            <input type="number" name="index">
+            <input type="submit" value="Открыть по индексу">
+        </form>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn2373KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
 </body>
